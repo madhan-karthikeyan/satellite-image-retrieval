@@ -1,5 +1,5 @@
-import type { AppRouterClient } from "@apps/api/routers/index";
-import { env } from "@apps/env/web";
+import type { AppRouterClient } from "@satellite/api/routers/index";
+import { env } from "@satellite/env/web";
 import { createORPCClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";

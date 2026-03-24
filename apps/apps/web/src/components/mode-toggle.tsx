@@ -1,10 +1,10 @@
-import { Button } from "@apps/ui/components/button";
+import { Button } from "@satellite/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@apps/ui/components/dropdown-menu";
+} from "@satellite/ui/components/dropdown-menu";
 import { Moon, Sun } from "lucide-react";
 
 import { useTheme } from "@/components/theme-provider";

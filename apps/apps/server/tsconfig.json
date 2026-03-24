@@ -1,5 +1,5 @@
 {
-  "extends": "@apps/config/tsconfig.base.json",
+  "extends": "@satellite/config/tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
     "outDir": "dist",

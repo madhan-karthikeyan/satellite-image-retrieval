@@ -1,28 +1,23 @@
 {
-  "name": "apps",
+  "name": "@satellite/monorepo",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "type": "module",
   "scripts": {
     "dev": "turbo dev",
+    "dev:web": "pnpm --filter @satellite/web dev",
+    "dev:server": "pnpm --filter @satellite/server dev",
     "build": "turbo build",
     "check-types": "turbo check-types",
-    "dev:web": "turbo -F web dev",
-    "dev:server": "turbo -F server dev"
-  },
-  "dependencies": {
-    "@apps/env": "workspace:*",
-    "dotenv": "catalog:",
-    "zod": "catalog:"
+    "clean": "turbo clean && rm -rf node_modules"
   },
   "devDependencies": {
-    "@apps/config": "workspace:*",
-    "@types/node": "catalog:",
-    "turbo": "^2.8.12",
-    "typescript": "^5"
+    "@types/node": "^22.0.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.0.0"
   },
-  "packageManager": "pnpm@10.7.0"
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  }
 }

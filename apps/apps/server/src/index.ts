@@ -1,6 +1,5 @@
-import { createContext } from "@apps/api/context";
-import { appRouter } from "@apps/api/routers/index";
-import { env } from "@apps/env/server";
+import { createContext } from "@satellite/api/context";
+import { appRouter } from "@satellite/api/routers/index";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { onError } from "@orpc/server";
@@ -16,7 +15,7 @@ app.use(logger());
 app.use(
   "/*",
   cors({
-    origin: env.CORS_ORIGIN,
+    origin: "*",
     allowMethods: ["GET", "POST", "OPTIONS"],
   }),
 );

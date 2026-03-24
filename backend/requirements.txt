@@ -1,0 +1,15 @@
+fastapi
+uvicorn[standard]
+python-multipart
+chromadb
+torch
+torchvision
+timm
+pillow
+numpy
+pydantic
+pydantic-settings
+rasterio
+opencv-python-headless
+python-dotenv
+aiofiles

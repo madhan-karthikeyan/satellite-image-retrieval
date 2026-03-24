@@ -1,5 +1,5 @@
 {
-  "name": "@apps/env",
+  "name": "@satellite/env",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,13 +8,13 @@
     "./web": "./src/web.ts"
   },
   "dependencies": {
-    "@t3-oss/env-core": "^0.13.1",
-    "dotenv": "catalog:",
-    "zod": "catalog:"
+    "@t3-oss/env-core": "^0.10.0",
+    "dotenv": "^16.4.5",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@apps/config": "workspace:*",
-    "@types/node": "catalog:",
-    "typescript": "^5"
+    "@satellite/config": "workspace:*",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.0.0"
   }
 }

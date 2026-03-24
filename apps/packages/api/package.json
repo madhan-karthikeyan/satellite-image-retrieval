@@ -1,5 +1,7 @@
 {
-  "name": "@apps/api",
+  "name": "@satellite/api",
+  "version": "0.0.0",
+  "private": true,
   "type": "module",
   "exports": {
     ".": {
@@ -11,17 +13,17 @@
   },
   "scripts": {},
   "dependencies": {
-    "@apps/env": "workspace:*",
-    "@orpc/client": "catalog:",
-    "@orpc/openapi": "catalog:",
-    "@orpc/server": "catalog:",
-    "@orpc/zod": "catalog:",
-    "dotenv": "catalog:",
-    "zod": "catalog:"
+    "@satellite/env": "workspace:*",
+    "@orpc/client": "^1.0.0",
+    "@orpc/openapi": "^1.0.0",
+    "@orpc/server": "^1.0.0",
+    "@orpc/zod": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@apps/config": "workspace:*",
-    "hono": "catalog:",
-    "typescript": "^5"
+    "@satellite/config": "workspace:*",
+    "hono": "^4.6.0",
+    "typescript": "^5.0.0"
   }
 }

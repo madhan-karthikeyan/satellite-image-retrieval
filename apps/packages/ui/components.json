@@ -12,11 +12,11 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@apps/ui/components",
-    "utils": "@apps/ui/lib/utils",
-    "hooks": "@apps/ui/hooks",
-    "lib": "@apps/ui/lib",
-    "ui": "@apps/ui/components"
+    "components": "@satellite/ui/components",
+    "utils": "@satellite/ui/lib/utils",
+    "hooks": "@satellite/ui/hooks",
+    "lib": "@satellite/ui/lib",
+    "ui": "@satellite/ui/components"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

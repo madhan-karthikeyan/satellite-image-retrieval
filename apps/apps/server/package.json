@@ -1,30 +1,31 @@
 {
-  "name": "server",
+  "name": "@satellite/server",
+  "version": "0.0.0",
+  "private": true,
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "build": "tsdown",
-    "check-types": "tsc -b",
-    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
     "dev": "tsx watch src/index.ts",
-    "start": "node dist/index.mjs"
+    "build": "tsdown",
+    "start": "node dist/index.mjs",
+    "check-types": "tsc -b"
   },
   "dependencies": {
-    "@apps/api": "workspace:*",
-    "@apps/env": "workspace:*",
+    "@satellite/api": "workspace:*",
+    "@satellite/env": "workspace:*",
     "@hono/node-server": "^1.14.4",
-    "@orpc/openapi": "catalog:",
-    "@orpc/server": "catalog:",
-    "@orpc/zod": "catalog:",
-    "dotenv": "catalog:",
-    "hono": "catalog:",
-    "zod": "catalog:"
+    "@orpc/openapi": "^1.0.0",
+    "@orpc/server": "^1.0.0",
+    "@orpc/zod": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "hono": "^4.6.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@apps/config": "workspace:*",
-    "@types/node": "catalog:",
+    "@satellite/config": "workspace:*",
+    "@types/node": "^22.0.0",
     "tsdown": "^0.16.5",
     "tsx": "^4.19.2",
-    "typescript": "^5"
+    "typescript": "^5.0.0"
   }
 }
