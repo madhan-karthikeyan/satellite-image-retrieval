@@ -50,7 +50,11 @@ coverage
 tmp
 temp
 
+<<<<<<< HEAD
 train_images
 train_labels
 
 chips
+=======
+.vite
+>>>>>>> 1fef637 (feat)
