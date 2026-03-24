@@ -4,6 +4,7 @@ import Globe from './components/Globe';
 import ImageUpload from './components/ImageUpload';
 import CoordinateDisplay from './components/CoordinateDisplay';
 import GlobePage from './pages/GlobePage';
+import { uploadImageAndGetCoordinates } from './services/api';
 import type { Coordinates } from './types';
 
 function App() {
@@ -39,16 +40,29 @@ function App() {
     };
   }, []);
 
-  const handleUpload = useCallback(async (_file: File) => {
+  const handleUpload = useCallback(async (file: File) => {
     setIsLoading(true);
     setError(null);
     setCoordinates(null);
 
-    setTimeout(() => {
-      const randomCoords = generateRandomCoordinates();
-      setCoordinates(randomCoords);
+    try {
+      // Try to call the backend API
+      const response = await uploadImageAndGetCoordinates(file);
+      
+      if (response.success && response.coordinates) {
+        setCoordinates(response.coordinates);
+      } else {
+        setError(response.message || 'Failed to retrieve coordinates');
+        // Fallback to random coordinates for demo
+        setCoordinates(generateRandomCoordinates());
+      }
+    } catch (err) {
+      // Backend not available - use demo mode with random coordinates
+      console.log('Backend not available, using demo mode');
+      setCoordinates(generateRandomCoordinates());
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   }, [generateRandomCoordinates]);
 
   if (showGlobe) {
