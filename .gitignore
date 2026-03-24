@@ -1,11 +1,11 @@
 # Dependencies
-node_modules
+node_modules/
 .pnp
 .pnp.js
 
 # Build outputs
-dist
-build
+dist/
+build/
 *.tsbuildinfo
 
 # Environment variables
@@ -13,42 +13,54 @@ build
 .env*.local
 
 # IDEs and editors
-.vscode/*
+.vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.idea
+.idea/
 *.swp
 *.swo
 *~
 .DS_Store
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
 
 # Turbo
-.turbo
-.nx
-
-# Better-T-Stack
-.alchemy
+.turbo/
+.nx/
 
 # Testing
-coverage
-.nyc_output
+coverage/
+.nyc_output/
 
 # Misc
 *.tgz
-.cache
-tmp
-temp
+.cache/
+tmp/
+temp/
 
-venv
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+dist/
 
+# Backend
+backend/chroma_db/
+backend/uploads/
+backend/outputs/
+
+# Model files
+*.pth
+*.pt
+*.onnx
+*.h5
