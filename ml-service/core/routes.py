@@ -127,3 +127,4 @@ async def get_coordinates(image_id: str = Query(..., description="The image ID r
             confidence=confidence
         )
     )
+

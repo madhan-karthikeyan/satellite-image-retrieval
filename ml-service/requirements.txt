@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+pydantic
+chromadb
+numpy
+opencv-python
+pillow
+python-multipart
+aiofiles
+tqdm
+requests
+torch
+torchvision
+open-clip-torch
+ftfy
+regex

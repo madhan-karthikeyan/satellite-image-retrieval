@@ -49,3 +49,8 @@ coverage
 .cache
 tmp
 temp
+
+train_images
+train_labels
+
+chips

@@ -12,7 +12,7 @@ import type { UploadResponse, CoordinatesResponse, ApiError } from '../types';
  * FastAPI backend server URL
  * TODO: Update this to production URL when deploying
  */
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = '';
 
 /**
  * Axios instance with default configuration
