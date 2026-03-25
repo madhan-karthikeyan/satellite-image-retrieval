@@ -58,3 +58,25 @@ chips
 =======
 .vite
 >>>>>>> 1fef637 (feat)
+
+venv
+data
+
+# Python
+__pycache__/
+*.pyc
+
+# Env
+.env
+.env.*
+
+# Data / Models
+checkpoints/
+chroma_index/
+data/
+
+# Node
+node_modules/
+
+# Build
+dist/

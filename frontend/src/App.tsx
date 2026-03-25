@@ -4,7 +4,7 @@ import Globe from './components/Globe';
 import ImageUpload from './components/ImageUpload';
 import CoordinateDisplay from './components/CoordinateDisplay';
 import GlobePage from './pages/GlobePage';
-import { uploadImageAndGetCoordinates } from './services/api';
+import { inferLocation } from './services/api';
 import type { Coordinates } from './types';
 
 function App() {
@@ -46,18 +46,19 @@ function App() {
     setCoordinates(null);
 
     try {
-      // Try to call the backend API
-      const response = await uploadImageAndGetCoordinates(file);
+      const response = await inferLocation(file);
       
       if (response.success && response.coordinates) {
-        setCoordinates(response.coordinates);
+        setCoordinates({
+          latitude: response.coordinates.latitude,
+          longitude: response.coordinates.longitude,
+          confidence: response.coordinates.confidence
+        });
       } else {
         setError(response.message || 'Failed to retrieve coordinates');
-        // Fallback to random coordinates for demo
         setCoordinates(generateRandomCoordinates());
       }
     } catch (err) {
-      // Backend not available - use demo mode with random coordinates
       console.log('Backend not available, using demo mode');
       setCoordinates(generateRandomCoordinates());
     } finally {

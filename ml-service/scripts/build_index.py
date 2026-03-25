@@ -1,149 +1,111 @@
-#!/usr/bin/env python3
-"""
-Build embedding index for satellite imagery.
-
-Usage:
-    python build_index.py --metadata-file ./data/metadata/xview_metadata.json --output-dir ./data
-
-This script:
-    1. Loads chip metadata
-    2. Generates embeddings using CLIP
-    3. Stores in ChromaDB
-    4. Saves index statistics
-"""
+"""Build ChromaDB index from fMoW dataset."""
 
 import argparse
-import json
-import logging
-from pathlib import Path
-from typing import Optional
 import sys
+from pathlib import Path
 
-# Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.config import DEVICE, CHROMA_PERSIST_DIR, CHROMA_COLLECTION_NAME
-from app.services.chroma_service import ChromaService
-from app.services.dataset_loader import DatasetLoader, IndexBuilder
+from datasets import load_dataset
+from tqdm import tqdm
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+from satgeoinfer.embedder import Embedder
+from satgeoinfer.retriever import Retriever
 
 
-def build_index(
-    metadata_file: str,
-    image_dir: Optional[str] = None,
-    output_dir: str = "./data",
-    batch_size: int = 32,
-    device: str = "cpu"
-) -> None:
-    """Build embedding index.
-    
+def build_index(split: str = "train", batch_size: int = 64):
+    """Build ChromaDB index from fMoW dataset.
+
     Args:
-        metadata_file: Path to metadata JSON file
-        image_dir: Directory containing chip images
-        output_dir: Output directory for index
+        split: Dataset split to index ('train', 'val', or 'test')
         batch_size: Batch size for embedding generation
-        device: Device to use (cuda or cpu)
     """
-    logger.info("=" * 80)
-    logger.info("Building Satellite Image Index")
-    logger.info("=" * 80)
-    
-    try:
-        # Load metadata
-        logger.info(f"Loading metadata from {metadata_file}")
-        with open(metadata_file, 'r') as f:
-            metadata_list = json.load(f)
-        logger.info(f"Loaded {len(metadata_list)} chip metadata")
-        
-        # Initialize ChromaDB
-        logger.info("Initializing ChromaDB...")
-        chroma_service = ChromaService(
-            persist_dir=CHROMA_PERSIST_DIR,
-            collection_name=CHROMA_COLLECTION_NAME,
-            device=device,
-        )
-        chroma_service.get_or_create_collection()
-        logger.info(f"✓ ChromaDB initialized ({CHROMA_PERSIST_DIR})")
-        
-        # Initialize dataset loader and index builder
-        dataset_loader = DatasetLoader()
-        index_builder = IndexBuilder(chroma_service, dataset_loader)
-        
-        # Build index
-        logger.info(f"Building index with {len(metadata_list)} chips...")
-        stats = index_builder.build_index_from_metadata(
-            metadata_list,
-            image_dir=image_dir,
-            batch_size=batch_size
-        )
-        
-        logger.info("=" * 80)
-        logger.info("Index Statistics")
-        logger.info("=" * 80)
-        logger.info(f"Total embeddings: {stats['total_embeddings']}")
-        logger.info(f"Collection count: {stats['collection_count']}")
-        logger.info(f"Embedding backend: {stats['embedding_backend']}")
-        logger.info("=" * 80)
-        
-        # Save stats
-        output_path = Path(output_dir)
-        output_path.mkdir(parents=True, exist_ok=True)
-        
-        stats_file = output_path / "index_stats.json"
-        with open(stats_file, 'w') as f:
-            json.dump(stats, f, indent=2, default=str)
-        logger.info(f"Saved statistics to {stats_file}")
-    
-    except Exception as e:
-        logger.error(f"Failed to build index: {e}", exc_info=True)
-        raise
+    print(f"Loading fMoW dataset (split: {split})...")
+    dataset = load_dataset(
+        "danielz01/fMoW",
+        split=split,
+        cache_dir="./data/fmow"
+    )
+
+    print(f"Dataset loaded: {len(dataset)} samples")
+
+    print("Initializing embedder...")
+    embedder = Embedder()
+
+    print("Initializing retriever...")
+    retriever = Retriever()
+
+    indexed_ids = retriever.get_all_ids()
+    print(f"Already indexed: {len(indexed_ids)} samples")
+
+    total = len(dataset)
+    processed = 0
+    skipped = 0
+
+    print(f"Processing {total} images in batches of {batch_size}...")
+
+    for i in tqdm(range(0, total, batch_size), desc="Building index"):
+        batch_end = min(i + batch_size, total)
+        batch = dataset.select(range(i, batch_end))
+
+        for idx, example in enumerate(batch):
+            global_idx = i + idx
+            image_id = f"{split}_{global_idx}"
+
+            if image_id in indexed_ids:
+                skipped += 1
+                continue
+
+            image = example["image"]
+            lat = example["lat"]
+            lon = example["lon"]
+            category = example.get("category", example.get("label", "unknown"))
+
+            try:
+                pixel_values = embedder.preprocess(image)
+                embedding = embedder.embed(pixel_values)
+
+                retriever.store(
+                    image_id=image_id,
+                    embedding=embedding,
+                    lat=lat,
+                    lon=lon,
+                    scene_label=category
+                )
+
+                processed += 1
+
+            except Exception as e:
+                print(f"Error processing {image_id}: {e}")
+                continue
+
+    print(f"\nIndexing complete!")
+    print(f"  Processed: {processed}")
+    print(f"  Skipped: {skipped}")
+    print(f"  Total in collection: {retriever.get_collection_size()}")
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Build embedding index")
+def main():
+    """Main entry point."""
+    parser = argparse.ArgumentParser(description="Build ChromaDB index from fMoW dataset")
     parser.add_argument(
-        "--metadata-file",
+        "--split",
         type=str,
-        default="./data/metadata/xview_metadata.json",
-        help="Path to metadata JSON file"
-    )
-    parser.add_argument(
-        "--image-dir",
-        type=str,
-        default=None,
-        help="Directory containing chip images (optional)"
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=str,
-        default="./data",
-        help="Output directory for index"
+        default="train",
+        choices=["train", "val", "test"],
+        help="Dataset split to index"
     )
     parser.add_argument(
         "--batch-size",
         type=int,
-        default=32,
+        default=64,
         help="Batch size for embedding generation"
     )
-    parser.add_argument(
-        "--device",
-        type=str,
-        default=DEVICE,
-        choices=["cuda", "cpu"],
-        help="Device to use (cuda or cpu)"
-    )
-    
+
     args = parser.parse_args()
-    
-    build_index(
-        metadata_file=args.metadata_file,
-        image_dir=args.image_dir,
-        output_dir=args.output_dir,
-        batch_size=args.batch_size,
-        device=args.device
-    )
+
+    build_index(split=args.split, batch_size=args.batch_size)
+
+
+if __name__ == "__main__":
+    main()

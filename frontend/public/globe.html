@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -139,6 +139,187 @@
         0,
         Cesium.Math.toRadians(-90),
         1000
+      )
+    });
+  }
+</script>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Globe Zoom UI</title>
+  <!-- Cesium -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      background: #0a0a0a;
+    }
+
+    #cesiumContainer {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Glass UI Panel */
+    .control-panel {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      padding: 20px;
+      border-radius: 16px;
+      background: rgba(20, 20, 20, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .control-panel h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      opacity: 0.8;
+    }
+
+    input {
+      width: 180px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      color: white;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="cesiumContainer"></div>
+
+<div class="control-panel">
+  <h2>🌍 Locate Target</h2>
+  <input id="lat" placeholder="Latitude (e.g. 13.0827)" />
+  <input id="lon" placeholder="Longitude (e.g. 80.2707)" />
+<button onclick="showClusterResult()">Show Prediction</button>
+</div>
+
+<div class="footer">Visual Search Demo</div>
+<script>
+  Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYjQ4NzBjNy0zYmM4LTQzNWMtOWVkOS1iYTBlMzRkMzhkY2MiLCJpZCI6NDA4Mjk5LCJpYXQiOjE3NzQzNDMzMDZ9.RObmxzxlfyMK1Q5vxOZVhmO5W7bQnx8UEObR7PRZe9I";
+
+  const viewer = new Cesium.Viewer("cesiumContainer", {
+    animation: false,
+    timeline: false,
+    baseLayerPicker: false,
+    geocoder: false,
+    sceneModePicker: false,
+    navigationHelpButton: false
+  });
+
+  viewer.scene.globe.enableLighting = true;
+
+  let rotating = true;
+
+  viewer.clock.onTick.addEventListener(function () {
+    if (rotating) {
+      viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, 0.0005);
+    }
+  });
+
+  // 🔥 YOUR JSON (PASTE HERE)
+  const data = {
+    "status": "success",
+    "centroid_lat": 47.18860841150454,
+    "centroid_lon": -1.624934343881641,
+    "confidence_radius_km": 0.00012406641779179198,
+    "secondary_clusters": [
+      { "centroid_lat": 47.188608409509015, "centroid_lon": -1.624934343194506 },
+      { "centroid_lat": 36.5998818910346, "centroid_lon": -4.542318689929772 },
+      { "centroid_lat": 41.437763936058595, "centroid_lon": 2.148400715332983 }
+    ]
+  };
+
+  function showClusterResult() {
+    rotating = false;
+    viewer.entities.removeAll();
+
+    const lat = data.centroid_lat;
+    const lon = data.centroid_lon;
+
+    // 🔴 MAIN POINT
+    const mainEntity = viewer.entities.add({
+      position: Cesium.Cartesian3.fromDegrees(lon, lat),
+      point: {
+        pixelSize: 16,
+        color: Cesium.Color.CYAN,
+        outlineColor: Cesium.Color.WHITE,
+        outlineWidth: 3
+      }
+    });
+
+    // 🔵 CONFIDENCE CIRCLE
+    viewer.entities.add({
+      position: Cesium.Cartesian3.fromDegrees(lon, lat),
+      ellipse: {
+        semiMajorAxis: data.confidence_radius_km * 1000,
+        semiMinorAxis: data.confidence_radius_km * 1000,
+        material: Cesium.Color.CYAN.withAlpha(0.2)
+      }
+    });
+
+    // 🟡 SECONDARY POINTS
+    data.secondary_clusters.forEach(c => {
+      viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(c.centroid_lon, c.centroid_lat),
+        point: {
+          pixelSize: 10,
+          color: Cesium.Color.YELLOW
+        }
+      });
+    });
+
+    // 🔥 PERFECT ZOOM
+    viewer.flyTo(mainEntity, {
+      duration: 3,
+      offset: new Cesium.HeadingPitchRange(
+        0,
+        Cesium.Math.toRadians(-90),
+        800   // 🔥 more zoom
       )
     });
   }

@@ -1,16 +1,23 @@
+# Core dependencies
+torch
+transformers
+datasets
+chromadb
+scikit-learn
+haversine
+numpy
+Pillow
+open-clip
+huggingface-hub
+torchvision
+
+# API dependencies
 fastapi
 uvicorn
-pydantic
-chromadb
-numpy
-opencv-python
-pillow
 python-multipart
-aiofiles
+pydantic
+
+# Utilities
 tqdm
-requests
-torch
-torchvision
-open-clip-torch
-ftfy
-regex
+openai
+python-dotenv
