@@ -50,25 +50,15 @@ coverage
 tmp
 temp
 
-<<<<<<< HEAD
-train_images
-train_labels
-
-chips
-=======
-.vite
->>>>>>> 1fef637 (feat)
-
+# Virtual environments
 venv
-data
+.venv
 
 # Python
 __pycache__/
 *.pyc
-
-# Env
-.env
-.env.*
+*.pyo
+*.egg-info/
 
 # Data / Models
 checkpoints/
@@ -79,4 +69,10 @@ data/
 node_modules/
 
 # Build
+.vite/
 dist/
+
+# Train data
+train_images/
+train_labels/
+chips/
