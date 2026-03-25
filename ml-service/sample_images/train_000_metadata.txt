@@ -1,0 +1,4 @@
+Index: 0
+Latitude: 39.11128435542
+Longitude: 125.9379985428
+Category: tunnel_opening

@@ -1,0 +1,4 @@
+Index: 7686
+Latitude: 41.35129115272
+Longitude: -83.79049022194
+Category: water_treatment_facility

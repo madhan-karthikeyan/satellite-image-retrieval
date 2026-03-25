@@ -1,0 +1,4 @@
+Index: 3983
+Latitude: 52.294857633780005
+Longitude: -0.467330357642
+Category: barn

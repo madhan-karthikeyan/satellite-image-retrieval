@@ -48,7 +48,12 @@ export const inferLocation = async (file: File): Promise<CoordinatesResponse> =>
           clusterSize: data.cluster_size,
           totalCandidates: data.total_candidates,
           sceneDistribution: data.scene_distribution,
-          explanation: data.explanation
+          explanation: data.explanation,
+          country: data.country,
+          countryCode: data.country_code,
+          region: data.region,
+          city: data.city,
+          continent: data.continent
         }
       };
     } else if (data.status === 'insufficient_confidence') {

@@ -14,57 +14,73 @@ const Globe: React.FC<GlobeProps> = ({ onCoordinatesChange }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadCesium = async () => {
       if (!containerRef.current || viewerRef.current) return;
 
-      const script = document.createElement('script');
-      script.src = 'https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Cesium.js';
-      script.async = true;
+      const cesiumToken = import.meta.env.VITE_CESIUM_TOKEN;
       
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Widgets/widgets.css';
-      document.head.appendChild(link);
+      if (!cesiumToken) {
+        setError('Cesium token not configured');
+        setIsLoading(false);
+        return;
+      }
 
-      await new Promise<void>((resolve) => {
-        script.onload = () => resolve();
-        document.body.appendChild(script);
-      });
+      try {
+        const script = document.createElement('script');
+        script.src = 'https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Cesium.js';
+        script.async = true;
+        
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Widgets/widgets.css';
+        document.head.appendChild(link);
 
-      window.Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYjQ4NzBjNy0zYmM4LTQzNWMtOWVkOS1iYTBlMzRkMzhkY2MiLCJpZCI6NDA4Mjk5LCJpYXQiOjE3NzQzNDMzMDZ9.RObmxzxlfyMK1Q5vxOZVhmO5W7bQnx8UEObR7PRZe9I';
+        await new Promise<void>((resolve, reject) => {
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error('Failed to load Cesium'));
+          document.body.appendChild(script);
+        });
 
-      const viewer = new window.Cesium.Viewer(containerRef.current, {
-        animation: false,
-        timeline: false,
-        baseLayerPicker: false,
-        geocoder: false,
-        sceneModePicker: false,
-        navigationHelpButton: false,
-        homeButton: false,
-        fullscreenButton: false,
-        selectionIndicator: false,
-        infoBox: false,
-      });
+        window.Cesium.Ion.defaultAccessToken = cesiumToken;
 
-      viewer.scene.globe.enableLighting = true;
-      viewer.scene.skyBox.show = true;
+        const viewer = new window.Cesium.Viewer(containerRef.current, {
+          animation: false,
+          timeline: false,
+          baseLayerPicker: false,
+          geocoder: false,
+          sceneModePicker: false,
+          navigationHelpButton: false,
+          homeButton: false,
+          fullscreenButton: false,
+          selectionIndicator: false,
+          infoBox: false,
+        });
 
-      let rotating = true;
-      viewer.clock.onTick.addEventListener(() => {
-        if (rotating) {
-          viewer.scene.camera.rotate(window.Cesium.Cartesian3.UNIT_Z, 0.0003);
+        viewer.scene.globe.enableLighting = true;
+        viewer.scene.skyBox.show = true;
+
+        let rotating = true;
+        viewer.clock.onTick.addEventListener(() => {
+          if (rotating) {
+            viewer.scene.camera.rotate(window.Cesium.Cartesian3.UNIT_Z, 0.0003);
+          }
+        });
+
+        (window as any).globeViewer = viewer;
+        (window as any).globeRotating = rotating;
+        viewerRef.current = viewer;
+        setIsLoading(false);
+        
+        if (onCoordinatesChange) {
+          (window as any).globeOnCoordinatesChange = onCoordinatesChange;
         }
-      });
-
-      (window as any).globeViewer = viewer;
-      (window as any).globeRotating = rotating;
-      viewerRef.current = viewer;
-      setIsLoading(false);
-      
-      if (onCoordinatesChange) {
-        (window as any).globeOnCoordinatesChange = onCoordinatesChange;
+      } catch (err) {
+        console.error('Failed to initialize Cesium:', err);
+        setError('Failed to load globe visualization');
+        setIsLoading(false);
       }
     };
 
@@ -97,6 +113,16 @@ const Globe: React.FC<GlobeProps> = ({ onCoordinatesChange }) => {
           <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 border-4 border-neon-purple/30 border-t-neon-purple rounded-full animate-spin" />
             <p className="text-gray-400 text-sm">Loading globe...</p>
+          </div>
+        </div>
+      )}
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-dark-900 z-10">
+          <div className="flex flex-col items-center gap-4 text-center px-4">
+            <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-gray-500 text-sm">{error}</p>
           </div>
         </div>
       )}

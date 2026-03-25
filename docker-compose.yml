@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-changeme}
+      - CHROMA_PERSIST_DIR=/app/chroma_index
+      - OPENROUTER_KEY=${OPENROUTER_KEY:-}
+    volumes:
+      - ./ml-service/chroma_index:/app/chroma_index
+      - ./ml-service/checkpoints:/app/checkpoints
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend

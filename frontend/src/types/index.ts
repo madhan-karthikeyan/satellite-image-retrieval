@@ -8,6 +8,11 @@ export interface Coordinates {
   totalCandidates?: number;
   sceneDistribution?: Record<string, number>;
   explanation?: string;
+  country?: string;
+  countryCode?: string;
+  region?: string;
+  city?: string;
+  continent?: string;
 }
 
 export interface CoordinatesResponse {
@@ -31,6 +36,11 @@ export interface InferResponse {
   explanation?: string;
   message?: string;
   candidates_retrieved?: number;
+  country?: string;
+  country_code?: string;
+  region?: string;
+  city?: string;
+  continent?: string;
 }
 
 export interface SecondaryCluster {

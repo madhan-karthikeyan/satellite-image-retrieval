@@ -1,0 +1,4 @@
+Index: 15932
+Latitude: -7.764873212376
+Longitude: 113.2122445788
+Category: electric_substation

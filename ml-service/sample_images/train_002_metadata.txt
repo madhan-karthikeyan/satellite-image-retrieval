@@ -1,0 +1,4 @@
+Index: 15372
+Latitude: 56.1033057621
+Longitude: 40.44174829236
+Category: hospital

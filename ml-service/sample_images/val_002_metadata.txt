@@ -1,0 +1,4 @@
+Index: 7966
+Latitude: -19.94693028772
+Longitude: -44.02225490844
+Category: shopping_mall

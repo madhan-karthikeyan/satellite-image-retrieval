@@ -1,0 +1,4 @@
+Index: 53802
+Latitude: 59.898925580960245
+Longitude: 30.410745156481013
+Category: smokestack

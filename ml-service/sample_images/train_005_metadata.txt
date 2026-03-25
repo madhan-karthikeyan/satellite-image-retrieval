@@ -1,0 +1,4 @@
+Index: 38430
+Latitude: 41.04114570892
+Longitude: -74.03503355763998
+Category: educational_institution

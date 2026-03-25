@@ -1,0 +1,4 @@
+Index: 69174
+Latitude: 41.0185597914
+Longitude: -7.440949157642
+Category: archaeological_site

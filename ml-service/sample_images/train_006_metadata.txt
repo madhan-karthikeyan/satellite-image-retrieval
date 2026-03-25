@@ -1,0 +1,4 @@
+Index: 46116
+Latitude: 38.8520496604
+Longitude: -9.180803757642
+Category: interchange

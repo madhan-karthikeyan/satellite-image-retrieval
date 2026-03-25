@@ -1,17 +1,19 @@
-# Core dependencies
-torch
+# Core ML
 transformers
 datasets
+open-clip-torch
+huggingface-hub
+
+# Vector DB
 chromadb
+
+# ML utilities
 scikit-learn
 haversine
 numpy
 Pillow
-open-clip
-huggingface-hub
-torchvision
 
-# API dependencies
+# API
 fastapi
 uvicorn
 python-multipart
@@ -21,3 +23,4 @@ pydantic
 tqdm
 openai
 python-dotenv
+geopy

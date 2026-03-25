@@ -1,0 +1,4 @@
+Index: 0
+Latitude: 14.858596747119998
+Longitude: 120.5440118188
+Category: aquaculture

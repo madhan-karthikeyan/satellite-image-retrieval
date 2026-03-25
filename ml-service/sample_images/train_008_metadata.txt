@@ -1,0 +1,4 @@
+Index: 61488
+Latitude: 51.50582614784
+Longitude: -0.09005307800236
+Category: place_of_worship

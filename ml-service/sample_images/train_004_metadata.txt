@@ -1,0 +1,4 @@
+Index: 30744
+Latitude: 25.10794651654
+Longitude: 55.18837017106
+Category: recreational_facility

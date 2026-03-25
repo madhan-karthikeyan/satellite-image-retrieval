@@ -1,0 +1,4 @@
+Index: 23058
+Latitude: 33.434970824400004
+Longitude: -112.0139326042
+Category: airport_terminal

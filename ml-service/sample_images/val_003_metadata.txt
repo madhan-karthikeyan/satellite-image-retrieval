@@ -1,0 +1,4 @@
+Index: 11949
+Latitude: 33.904028177179995
+Longitude: -84.46492870794
+Category: office_building
